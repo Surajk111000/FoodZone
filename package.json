@@ -1,32 +1,24 @@
 {
   "name": "foodzone",
   "version": "1.0.0",
-  "description": "FoodZone - Modern Food Delivery Application",
+  "description": "FoodZone - Modern Food Delivery Application (Frontend Only)",
   "main": "index.js",
   "private": true,
   "scripts": {
-    "start": "concurrently \"cd app && npm run dev\" \"cd server && npm run server\"",
-    "client": "cd app && npm run dev",
-    "server": "cd server && npm run server",
-    "build": "npm --prefix app run build && npm --prefix server run build",
-    "install-all": "npm install && npm --prefix app install && npm --prefix server install"
+    "start": "cd app && npm run dev",
+    "dev": "cd app && npm run dev",
+    "build": "cd app && npm run build",
+    "preview": "cd app && npm run preview"
   },
-  "workspaces": [
-    "app",
-    "server"
-  ],
   "keywords": [
     "food",
     "delivery",
     "react",
-    "express",
-    "typescript"
+    "vite",
+    "frontend"
   ],
   "author": "Suraj Koli",
   "license": "ISC",
-  "devDependencies": {
-    "concurrently": "^8.0.1"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Surajk111000/FoodZone.git"
