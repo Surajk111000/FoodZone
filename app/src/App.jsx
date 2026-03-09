@@ -4,35 +4,29 @@ import Header from "./components/Header/Header";
 import FilterButtons from "./components/FilterButtons/FilterButtons";
 import SearchResults from "./components/SearchResults/SearchResults";
 import Footer from "./components/Footer/Footer";
-import { BASE_URL, FILTER_BUTTONS } from "./constants";
+import { FILTER_BUTTONS, MOCK_FOOD_DATA } from "./constants";
 
 const App = () => {
   const [data, setData] = useState(null);
   const [filteredData, setFilteredData] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedBtn, setSelectedBtn] = useState("all");
 
-  // Fetch food data on mount
+  // Load mock data on mount
   useEffect(() => {
-    const fetchFoodData = async () => {
+    try {
       setLoading(true);
-      try {
-        const response = await fetch(BASE_URL);
-        if (!response.ok) throw new Error("Failed to fetch data");
-
-        const json = await response.json();
-        setData(json);
-        setFilteredData(json);
-      } catch (err) {
-        setError("Unable to fetch data. Please try again later.");
-        console.error("Fetch error:", err);
-      } finally {
+      // Simulate API delay for better UX
+      setTimeout(() => {
+        setData(MOCK_FOOD_DATA);
+        setFilteredData(MOCK_FOOD_DATA);
         setLoading(false);
-      }
-    };
-
-    fetchFoodData();
+      }, 500);
+    } catch (err) {
+      setError("Failed to load food data");
+      setLoading(false);
+    }
   }, []);
 
   // Search food by name
@@ -40,7 +34,6 @@ const App = () => {
     const searchValue = e.target.value.trim();
 
     if (searchValue === "") {
-      // Reset to current filter
       filterFood(selectedBtn);
       return;
     }
@@ -108,7 +101,17 @@ export const Container = styled.div`
 `;
 
 const ErrorIcon = styled.div`
-  font-size: 48px;
+  font-size: 64px;
+  animation: float 3s ease-in-out infinite;
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-15px);
+    }
+  }
 `;
 
 const ErrorContainer = styled.div`
@@ -117,17 +120,40 @@ const ErrorContainer = styled.div`
   align-items: center;
   justify-content: center;
   min-height: 60vh;
-  gap: 16px;
+  gap: 20px;
   text-align: center;
-  padding: 20px;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, rgba(255, 67, 67, 0.1) 0%, rgba(70, 144, 213, 0.1) 100%);
+  border-radius: 24px;
+  border: 2px solid rgba(255, 67, 67, 0.2);
+  margin: 40px auto;
+  max-width: 500px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  animation: slideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
   h2 {
     font-size: 28px;
+    font-weight: 700;
     margin: 0;
+    color: white;
+    letter-spacing: 0.5px;
   }
 
   p {
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.7);
     margin: 0;
+    font-size: 15px;
+    font-weight: 500;
   }
 `;
