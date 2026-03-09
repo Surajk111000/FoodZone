@@ -1,8 +1,10 @@
-# Railway Configuration File
-# Explicitly tells Railway to build the server directory
+# Railway Configuration for FoodZone Backend
+# This configuration tells Railway to build and run the Node.js server
 
 [build]
 builder = "nixpacks"
+buildCommand = "cd server && npm install && npm run build"
 
-[deploy]
-startCommand = "npm start"
+[deploy]  
+startCommand = "cd server && npm start"
+restartPolicyMaxRetries = 5
