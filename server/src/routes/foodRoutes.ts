@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from "express";
+import express, { Request, Response } from "express";
 import { foodData } from "../data/foodData";
 
 export const foodRoutes = express.Router();
@@ -9,15 +9,39 @@ export const foodRoutes = express.Router();
  */
 foodRoutes.get("/", (req: Request, res: Response) => {
   try {
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       data: foodData,
       message: "Food items fetched successfully",
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Error fetching food items",
+    });
+  }
+});
+
+/**
+ * GET /api/foods/type/:type
+ * Get food items by type (breakfast, lunch, dinner)
+ */
+foodRoutes.get("/type/:type", (req: Request, res: Response) => {
+  try {
+    const { type } = req.params;
+    const filteredFood = foodData.filter(
+      (f) => f.type.toLowerCase() === type.toLowerCase()
+    );
+
+    return res.status(200).json({
+      success: true,
+      data: filteredFood,
+      message: `${type} items fetched successfully`,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching food items by type",
     });
   }
 });
@@ -38,39 +62,15 @@ foodRoutes.get("/:id", (req: Request, res: Response) => {
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       data: food,
       message: "Food item fetched successfully",
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Error fetching food item",
-    });
-  }
-});
-
-/**
- * GET /api/foods/type/:type
- * Get food items by type (breakfast, lunch, dinner)
- */
-foodRoutes.get("/type/:type", (req: Request, res: Response) => {
-  try {
-    const { type } = req.params;
-    const filteredFood = foodData.filter(
-      (f) => f.type.toLowerCase() === type.toLowerCase()
-    );
-
-    res.status(200).json({
-      success: true,
-      data: filteredFood,
-      message: `${type} items fetched successfully`,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Error fetching food items by type",
     });
   }
 });

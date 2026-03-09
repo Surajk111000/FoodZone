@@ -107,6 +107,10 @@ export const Container = styled.div`
   padding: 0 16px;
 `;
 
+const ErrorIcon = styled.div`
+  font-size: 48px;
+`;
+
 const ErrorContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -116,10 +120,6 @@ const ErrorContainer = styled.div`
   gap: 16px;
   text-align: center;
   padding: 20px;
-
-  ${ErrorIcon} {
-    font-size: 48px;
-  }
 
   h2 {
     font-size: 28px;
@@ -131,5 +131,3 @@ const ErrorContainer = styled.div`
     margin: 0;
   }
 `;
-
-const ErrorIcon = styled.div``;
