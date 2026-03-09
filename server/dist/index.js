@@ -6,60 +6,46 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const path_1 = __importDefault(require("path"));
 const cors_1 = __importDefault(require("cors"));
+const foodRoutes_1 = require("./routes/foodRoutes");
+const foodData_1 = require("./data/foodData");
 const app = (0, express_1.default)();
+const PORT = process.env.PORT || 9000;
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
-app.use((0, cors_1.default)());
+app.use((0, cors_1.default)({
+    origin: "*",
+    credentials: true,
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+}));
 app.use("/images", express_1.default.static(path_1.default.join(__dirname, "../public/images")));
-app.get("/", (req, res) => {
-    console.log(path_1.default.join(__dirname, "../public"));
-    const foodData = [
-        {
-            name: "Boilded Egg",
-            price: 10,
-            text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.",
-            image: "/images/egg.png",
-            type: "breakfast",
-        },
-        {
-            name: "RAMEN",
-            price: 25,
-            text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.",
-            image: "/images/ramen.png",
-            type: "lunch",
-        },
-        {
-            name: "GRILLED CHICKEN",
-            price: 45,
-            text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.",
-            image: "/images/chicken.png",
-            type: "dinner",
-        },
-        {
-            name: "CAKE",
-            price: 18,
-            text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.",
-            image: "/images/cake.png",
-            type: "breakfast",
-        },
-        {
-            name: "BURGER",
-            price: 23,
-            text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.",
-            image: "/images/burger.png",
-            type: "lunch",
-        },
-        {
-            name: "PANCAKE",
-            price: 25,
-            text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.",
-            image: "/images/pancake.png",
-            type: "dinner",
-        },
-    ];
-    res.json(foodData);
+app.get("/health", (req, res) => {
+    res.status(200).json({
+        success: true,
+        message: "Server is running",
+        timestamp: new Date().toISOString(),
+    });
 });
-app.listen(9000, () => {
-    console.log("Server is running on port 9000");
+app.use("/api/foods", foodRoutes_1.foodRoutes);
+app.get("/", (req, res) => {
+    res.status(200).json(foodData_1.foodData);
+});
+app.use((err, req, res, next) => {
+    console.error("Error:", err);
+    res.status(500).json({
+        success: false,
+        message: "Internal server error",
+        error: process.env.NODE_ENV === "development" ? err.message : undefined,
+    });
+});
+app.use((req, res) => {
+    res.status(404).json({
+        success: false,
+        message: "Endpoint not found",
+    });
+});
+app.listen(PORT, () => {
+    console.log(`🍔 FoodZone Server is running on port ${PORT}`);
+    console.log(`📍 Environment: ${process.env.NODE_ENV || "development"}`);
+    console.log(`🔗 API Documentation: http://localhost:${PORT}/api/foods`);
 });
 //# sourceMappingURL=index.js.map

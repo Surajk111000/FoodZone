@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import SearchResult from "./components/SearchResults/SearchResult";
-
-export const BASE_URL = "http://localhost:9000";
+import Header from "./components/Header/Header";
+import FilterButtons from "./components/FilterButtons/FilterButtons";
+import SearchResults from "./components/SearchResults/SearchResults";
+import Footer from "./components/Footer/Footer";
+import { BASE_URL, FILTER_BUTTONS } from "./constants";
 
 const App = () => {
   const [data, setData] = useState(null);
@@ -11,32 +13,36 @@ const App = () => {
   const [error, setError] = useState(null);
   const [selectedBtn, setSelectedBtn] = useState("all");
 
+  // Fetch food data on mount
   useEffect(() => {
     const fetchFoodData = async () => {
       setLoading(true);
-
       try {
         const response = await fetch(BASE_URL);
+        if (!response.ok) throw new Error("Failed to fetch data");
 
         const json = await response.json();
-
         setData(json);
         setFilteredData(json);
+      } catch (err) {
+        setError("Unable to fetch data. Please try again later.");
+        console.error("Fetch error:", err);
+      } finally {
         setLoading(false);
-      } catch (error) {
-        setError("Unable to fetch data");
       }
     };
+
     fetchFoodData();
   }, []);
 
+  // Search food by name
   const searchFood = (e) => {
-    const searchValue = e.target.value;
-
-    console.log(searchValue);
+    const searchValue = e.target.value.trim();
 
     if (searchValue === "") {
-      setFilteredData(null);
+      // Reset to current filter
+      filterFood(selectedBtn);
+      return;
     }
 
     const filter = data?.filter((food) =>
@@ -45,122 +51,85 @@ const App = () => {
     setFilteredData(filter);
   };
 
+  // Filter food by type
   const filterFood = (type) => {
     if (type === "all") {
       setFilteredData(data);
-      setSelectedBtn("all");
-      return;
+    } else {
+      const filter = data?.filter((food) =>
+        food.type.toLowerCase().includes(type.toLowerCase())
+      );
+      setFilteredData(filter);
     }
-
-    const filter = data?.filter((food) =>
-      food.type.toLowerCase().includes(type.toLowerCase())
-    );
-    setFilteredData(filter);
     setSelectedBtn(type);
   };
 
-  const filterBtns = [
-    {
-      name: "All",
-      type: "all",
-    },
-    {
-      name: "Breakfast",
-      type: "breakfast",
-    },
-    {
-      name: "Lunch",
-      type: "lunch",
-    },
-    {
-      name: "Dinner",
-      type: "dinner",
-    },
-  ];
-
-  if (error) return <div>{error}</div>;
-  if (loading) return <div>loading.....</div>;
+  if (error) {
+    return (
+      <AppContainer>
+        <ErrorContainer>
+          <ErrorIcon>⚠️</ErrorIcon>
+          <h2>Oops! Something went wrong</h2>
+          <p>{error}</p>
+        </ErrorContainer>
+      </AppContainer>
+    );
+  }
 
   return (
-    <>
+    <AppContainer>
+      <Header onSearch={searchFood} logo="/logo.svg" />
       <Container>
-        <TopContainer>
-          <div className="logo">
-            <img src="/logo.svg" alt="logo" />
-          </div>
-
-          <div className="search">
-            <input onChange={searchFood} placeholder="Search Food" />
-          </div>
-        </TopContainer>
-
-        <FilterContainer>
-          {filterBtns.map((value) => (
-            <Button
-              isSelected={selectedBtn === value.type}
-              key={value.name}
-              onClick={() => filterFood(value.type)}
-            >
-              {value.name}
-            </Button>
-          ))}
-        </FilterContainer>
+        <FilterButtons
+          buttons={FILTER_BUTTONS}
+          selectedBtn={selectedBtn}
+          onFilter={filterFood}
+        />
+        <SearchResults data={filteredData} isLoading={loading} />
       </Container>
-      <SearchResult data={filteredData} />
-    </>
+      <Footer />
+    </AppContainer>
   );
 };
 
 export default App;
 
+const AppContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+`;
+
 export const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
+  width: 100%;
+  padding: 0 16px;
 `;
-const TopContainer = styled.section`
-  height: 140px;
+
+const ErrorContainer = styled.div`
   display: flex;
-  justify-content: space-between;
-  padding: 16px;
+  flex-direction: column;
   align-items: center;
-
-  .search {
-    input {
-      background-color: transparent;
-      border: 1px solid red;
-      color: white;
-      border-radius: 5px;
-      height: 40px;
-      font-size: 16px;
-      padding: 0 10px;
-      &::placeholder {
-        color: white;
-      }
-    }
-  }
-
-  @media (0 < width < 600px) {
-    flex-direction: column;
-    height: 120px;
-  }
-`;
-
-const FilterContainer = styled.section`
-  display: flex;
   justify-content: center;
-  gap: 12px;
-  padding-bottom: 40px;
-`;
+  min-height: 60vh;
+  gap: 16px;
+  text-align: center;
+  padding: 20px;
 
-export const Button = styled.button`
-  background: ${({ isSelected }) => (isSelected ? "#f22f2f" : "#ff4343")};
-  outline: 1px solid ${({ isSelected }) => (isSelected ? "white" : "#ff4343")};
-  border-radius: 5px;
-  padding: 6px 12px;
-  border: none;
-  color: white;
-  cursor: pointer;
-  &:hover {
-    background-color: #f22f2f;
+  ${ErrorIcon} {
+    font-size: 48px;
+  }
+
+  h2 {
+    font-size: 28px;
+    margin: 0;
+  }
+
+  p {
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0;
   }
 `;
+
+const ErrorIcon = styled.div``;

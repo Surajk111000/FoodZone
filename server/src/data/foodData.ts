@@ -1,0 +1,51 @@
+// Food data mock database
+export const foodData = [
+  {
+    id: 1,
+    name: "Boiled Egg",
+    price: 10,
+    text: "Perfectly boiled protein-packed eggs, great for breakfast.",
+    image: "/images/egg.png",
+    type: "breakfast",
+  },
+  {
+    id: 2,
+    name: "RAMEN",
+    price: 25,
+    text: "Delicious traditional Japanese ramen with rich broth.",
+    image: "/images/ramen.png",
+    type: "lunch",
+  },
+  {
+    id: 3,
+    name: "GRILLED CHICKEN",
+    price: 45,
+    text: "Juicy grilled chicken breast with herbs and spices.",
+    image: "/images/chicken.png",
+    type: "dinner",
+  },
+  {
+    id: 4,
+    name: "CAKE",
+    price: 18,
+    text: "Rich and moist chocolate cake perfect for dessert lovers.",
+    image: "/images/cake.png",
+    type: "breakfast",
+  },
+  {
+    id: 5,
+    name: "BURGER",
+    price: 23,
+    text: "Classic burger with fresh ingredients and special sauce.",
+    image: "/images/burger.png",
+    type: "lunch",
+  },
+  {
+    id: 6,
+    name: "PANCAKE",
+    price: 25,
+    text: "Fluffy pancakes topped with syrup and fresh berries.",
+    image: "/images/pancake.png",
+    type: "dinner",
+  },
+];
