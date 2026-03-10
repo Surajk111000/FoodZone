@@ -4,6 +4,7 @@ import App from "./App.jsx";
 import { GlobalStyle } from "./styles/GlobalStyles";
 import { AppProvider } from "./context/AppContext";
 
+// Fresh deployment - v2
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AppProvider>
